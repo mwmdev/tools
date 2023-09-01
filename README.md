@@ -4,7 +4,7 @@
 
 [wpcli-updates-checker](https://github.com/mwmdev/tools/blob/main/wpcli-updates-checker.py) is a script that uses `wp-cli` to list the number Wordpress updates (core, plugins, theme, translations) for any Wordpress install it finds in a specific folder and it's subfolders.
 
-It is intended to work with [Local](https://localwp.com/) using a global install of [wp-cli](https://wp-cli.org/), using [this configuration](https://salferrarello.com/wp-cli-local-by-flywheel-without-ssh/).
+It is intended to work with [Local](https://localwp.com/) using a global install of [wp-cli](https://wp-cli.org/), following [this configuration](https://salferrarello.com/wp-cli-local-by-flywheel-without-ssh/).
 
 Example output :
 
