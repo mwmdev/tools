@@ -115,3 +115,6 @@ for folder in folders:
         except FileNotFoundError:
             pass
             print("Error: wp-cli.php not found for {}".format(folder))
+
+
+    
