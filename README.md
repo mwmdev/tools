@@ -2,9 +2,9 @@
 
 ### mwmuc
 
-[mwmuc](https://github.com/mwmdev/tools/blob/main/wpcli-updates-checker.py) uses `wp-cli` to list the number of Wordpress updates (core, plugins, theme and translations) for any Wordpress install it finds in a specific folder and it's subfolders.
+[mwmuc](https://github.com/mwmdev/tools/blob/main/mwmuc/mwmuc.py) uses `wp-cli` to list the number of Wordpress updates (core, plugins, theme and translations) for any Wordpress install it finds in a specific folder and it's subfolders.
 
-It is intended to work with [Local](https://localwp.com/) using a global install of [wp-cli](https://wp-cli.org/), following [this configuration](https://salferrarello.com/wp-cli-local-by-flywheel-without-ssh/). Also tested with [VVV](https://varyingvagrantvagrants.org/)
+It is intended to work with [Local](https://localwp.com/) using a global install of [wp-cli](https://wp-cli.org/), following [this configuration](https://salferrarello.com/wp-cli-local-by-flywheel-without-ssh/). Also tested with [VVV](https://varyingvagrantvagrants.org/).
 
 Example output :
 
