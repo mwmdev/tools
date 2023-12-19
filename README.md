@@ -11,16 +11,16 @@ Example output :
 ```
 Site name: TestProject
 
-Plugin updates: 17
-Wordpress updates: 2
-Theme updates: 1
-Language updates: 1
+- Plugin updates: 17
+- Wordpress updates: 2
+- Theme updates: 1
+- Language updates: 1
 
 
 Site name: AnotherProject
 
-Plugin updates: 5 
-Wordpress updates: 1
-Theme updates: 2
-Language updates: 1
+- Plugin updates: 5 
+- Wordpress updates: 1
+- Theme updates: 2
+- Language updates: 1
 ```
