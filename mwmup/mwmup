@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# Get the name of the current branch
+currentbranch=$(git rev-parse --abbrev-ref HEAD)
+
+# Read the .env file
+if [ -f "../.env" ]; then
+  source ../.env
+else
+  echo "ERROR: .env file not found."
+  exit 1
+fi
+
+#{{{ The update function
+update () {
+
+  FAILED=()
+  currentpath=$(pwd)
+
+  for plugin in $1 ; do
+    echo -e "Updating « \033[0;32m$plugin\033[0m »"
+    UPDATE=$(wp plugin update $plugin --path=$currentpath --allow-root)
+    if [[ $UPDATE != *"Success"* ]]; then
+      echo -e "Update of « \033[0;32m$plugin\033[0m » \033[0;31mfailed\033[0m."
+      FAILED+=($plugin)
+    else
+      echo -e "Update of « \033[0;32m$plugin\033[0m » successful."
+      # echo -e "Git adding updated plugin files."
+      git add -A wp-content/plugins/$plugin
+      # echo -e "Git adding commit message."
+      git commit --quiet -m "Met à jour le plugin « $plugin »"
+    fi
+  done
+
+  # if size of FAILED array is greater than 0, then there are failed updates
+  if [ ${#FAILED[@]} -gt 0 ]; then
+    echo -e "The following plugins failed to update: \033[0;31m${failed_updates[@]}\033[0m"
+    echo -e "Exiting"
+  else
+    # Push to remote
+    echo -e "Pushing changes to remote."
+    git push origin $currentbranch > /dev/null 2>&1
+  fi
+
+}
+#}}}
+
+# Welcome message
+prompt=$(echo -e "On branch « \033[0;32m$currentbranch\033[0m », do you want to update plugins? (Y/n): ")
+read -p "$prompt" -i Y answer
+if [ "$answer" != "${answer#[Nn]}" ] ;then
+  echo "Aborted!"
+  return 1
+fi
+
+echo -e "Setting « \033[0;32mWP_DEBUG\033[0m » to « \033[0;32mfalse\033[0m »"
+wp config set WP_DEBUG false --raw --type=constant --quiet
+
+echo "Checking for plugin updates..."
+
+# Get the list of plugins with updates available
+plugins="$(wp plugin list --update=available --field=name)"
+
+# Exit if there are no plugins with updates available
+if [ -z "$plugins" ]
+then
+  echo "No plugins to update, exiting."
+  return 1
+fi
+
+plugins=$(echo $plugins|tr -d '\r')
+nbplugins=$(echo $plugins|wc -w)
+
+ignoredplugins=$(echo $ignore|tr ',' ' ')
+# Sort plugins by alphabetical order
+ignoredplugins=$(echo $ignoredplugins|tr ' ' '\n'|sort -V|tr '\n' ' ')
+nbignoredplugins=$(echo $ignoredplugins|wc -w)
+
+# Echo out the list of plugins
+echo -e "Found \033[0;32m$nbplugins\033[0m plugin(s) with updates : \033[0;32m$plugins\033[0m"
+
+# Remove ignored plugins from the list
+for ignoredplugin in $ignoredplugins
+do
+  plugins=$(echo $plugins|sed "s/$ignoredplugin//g")
+done
+
+nbtotalplugins=$((nbplugins-nbignoredplugins))
+
+# Echo out the list of ingored plugins
+if [ -n "$ignoredplugins" ]
+then
+  echo -e "Also found \033[0;32m$nbignoredplugins\033[0m plugin(s) to ignore : \033[0;32m$ignoredplugins\033[0m"
+fi
+
+# if totalplugin is 0, exit
+if [ $nbtotalplugins -eq 0 ]
+then
+  echo "No plugins to update, exiting."
+  return 1
+fi
+
+# Confirm that we want to update
+while true; do
+  prompt=$(echo -e "Do you want to update \033[0;32m$nbtotalplugins\033[0m plugin(s)? (Y/n): ")
+  read -p "$prompt" -i Y answer
+  case $answer in
+    [Yy]* ) update "$plugins"; break;;
+    [Nn]* ) echo "Aborted!"; return 1;;
+    * ) echo "Please answer yes or no.";;
+  esac
+done
