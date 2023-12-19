@@ -1,0 +1,87 @@
+#!/bin/bash
+
+if [ -f "../.env" ]; then
+  source ../.env
+  # echo "User: $user"
+  # echo "Server: $server"
+  # echo "Port: $port"
+  # echo "Path: $path"
+  # echo "Merge into: $mergeinto"
+else
+  echo "ERROR: .env file not found."
+  exit 1
+fi
+
+currentbranch=$(git rev-parse --abbrev-ref HEAD)
+
+# on which branch are we ?
+echo -e "On branch: « \033[1;32m$currentbranch\033[0m »"
+
+# if there are unpushed commits
+if [ -n "$(git log @{u}..)" ]; then
+  echo "The following commits are not pushed:"
+  echo ""
+  git log @{u}..
+  echo ""
+  prompt=$(echo -e "Do you want to push them? (Y/n): ")
+  read -p "$prompt" -i Y answer
+  if [ "$answer" == "${answer#[Yy]}" ] ;then
+    echo -e "Pushing changes..."
+    git push origin $currentbranch > /dev/null 2>&1
+  else
+    echo "Aborted!"
+    exit 0
+  fi
+fi
+
+prompt=$(echo -e "Do you want to deploy? (Y/n): ")
+read -p "$prompt" -i Y answer
+if [ "$answer" != "${answer#[Nn]}" ] ;then
+  echo "Aborted!"
+  exit 0
+fi
+
+# if current branch is not the one defined in .env
+if [ "$currentbranch" != "$mergeinto" ]; then
+
+  # Use glab to merge the current branch
+  echo -e "Creating request to merge « \033[0;32m$currentbranch\033[0m » into « \033[0;32m$mergeinto\033[0m »"
+  # glab mr create -fy > /dev/null 2>&1
+  glab mr create -fy
+  sleep 10
+
+  # Merge
+  echo -e "Merging branch « \033[0;32m$currentbranch\033[0m » into « \033[0;32m$mergeinto\033[0m »"
+  # glab mr merge -y > /dev/null 2>&1
+  glab mr merge -y
+
+  # wait a few seconds for merge to complete
+  sleep 15
+
+else
+  echo -e "We are on branch « \033[0;32m$mpathergeinto\033[0m », no need to merge."
+fi
+
+# Test a connection to the server
+echo -e "Testing connection to « \033[0;32m$server\033[0m » on port « \033[0;32m$port\033[0m » with user « \033[0;32m$user\033[0m » ..."
+ssh -q $user@$server -p $port exit
+if [ $? -ne 0 ]; then
+  echo "Connection failed."
+  return 1
+fi
+
+echo -e "Connecting to « \033[0;32m$server\033[0m »"
+echo -e "Entering path « \033[0;32m$path\033[0m »"
+echo -e "Pulling changes ..."
+echo ""
+
+ssh $user@$server -p $port "cd $path;git pull origin $mergeinto"
+if [ $? -eq 0 ]; then
+  echo ""
+  echo -e "\033[0;32mDeployed, good job!\033[0m"
+else
+  echo ""
+  echo "Deploy failed."
+  return 1
+fi
+
