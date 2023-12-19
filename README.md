@@ -27,7 +27,7 @@ Site name: AnotherProject
 
 ### mwmup
 
-[mwmup](https://github.com/mwmdev/tools/blob/main/mwmup/mwmup.py) uses `wp-cli` and `git` to update Wordpress plugins, stage the new files, add commits and push to the repo.
+[mwmup](https://github.com/mwmdev/tools/blob/main/mwmup/mwmup) uses `wp-cli` and `git` to update Wordpress plugins, stage the new files, add commits and push to the repo.
 
 Settings are defined in an `.env` file like so :
 
@@ -56,4 +56,19 @@ Update of « mailpoet » successful.
 Updating « google-site-kit »
 Update of « google-site-kit » successful.
 Pushing changes to remote.
+```
+
+### mwmdp
+
+[mwmdp](https://github.com/mwmdev/tools/blob/main/mwmdp/mwmdp) uses `wp-cli` and `glab` to merge and deploy to a server. It uses the same `.env` file as `mwmup`.
+
+Sample output :
+```
+On branch: « main »
+Do you want to deploy? (Y/n): 
+We are on branch « main », no need to merge.
+Testing connection to « ftp.myhost.net » on port « 22 » with user « johndoe » ...
+Connecting to « ftp.myhost.net »
+Entering path « /path/to/www »
+Pulling changes ...
 ```
