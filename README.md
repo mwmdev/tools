@@ -72,3 +72,17 @@ Connecting to « ftp.myhost.net »
 Entering path « /path/to/www »
 Pulling changes ...
 ```
+### mwmgs
+
+[mwmgs](https://github.com/mwmdev/tools/blob/main/mwmgs/mwmgs) is a simple bash script that looks for folders named `public_html` in the current folder recursively and gathers the number of unstaged git changes in each folder, then displays the results in a table.
+
+
+Example output :
+
+```
+Project         | Unstaged Changes
+-------         | ----------------
+myproject       | 0
+anotherproject  | 3
+testproject     | 1
+```
