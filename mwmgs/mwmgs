@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Initialize an empty array to store results
+declare -A results
+
+# Find all directories named "public_html"
+dirs=$(find . -type d -name "public_html")
+
+if [ -z "$dirs" ]; then
+    echo "Error: No directory named 'public_html' found."
+    exit 1
+fi
+
+for dir in $dirs; do
+    # Navigate to the parent directory
+    parent_dir=$(dirname "$dir")
+
+    # Run git status --porcelain and count the number of unstaged changes
+    num_changes=$(cd "$dir" && git status --porcelain | wc -l)
+
+    # Store the result
+    results["$parent_dir"]=$num_changes
+done
+
+# Display the results in a table format
+
+# Define the header
+printf "%-15s | %-15s\n" "Project" "Unstaged Changes"
+printf "%-15s | %-15s\n" "-------" "----------------"
+
+# Define the rows
+for dir in "${!results[@]}"; do
+    project=${dir#./}  # Remove ./ from the start of $dir
+    printf "%-15s | %-15s\n" "$project" "${results[$dir]}"
+done
