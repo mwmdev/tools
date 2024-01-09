@@ -19,7 +19,7 @@ Site name: TestProject
 
 Site name: AnotherProject
 
-- Plugin updates: 5 
+- Plugin updates: 5
 - Wordpress updates: 1
 - Theme updates: 2
 - Language updates: 1
@@ -47,7 +47,7 @@ On branch « main », do you want to update plugins? (Y/n): Y
 Setting « WP_DEBUG » to « false »
 Checking for plugin updates...
 Found 3 plugin(s) with updates : facetwp mailpoet google-site-kit
-Also found 1 plugin(s) to ignore : user-role-editor 
+Also found 1 plugin(s) to ignore : user-role-editor
 Do you want to update 3 plugin(s)? (Y/n): Y
 Updating « facetwp »
 Update of « facetwp » successful.
@@ -65,7 +65,7 @@ Pushing changes to remote.
 Sample output :
 ```
 On branch: « main »
-Do you want to deploy? (Y/n): 
+Do you want to deploy? (Y/n):
 We are on branch « main », no need to merge.
 Testing connection to « ftp.myhost.net » on port « 22 » with user « johndoe » ...
 Connecting to « ftp.myhost.net »
@@ -85,4 +85,27 @@ Project         | Unstaged Changes
 myproject       | 0
 anotherproject  | 3
 testproject     | 1
+```
+
+### mwmpl
+
+[mwmpl](https://github.com/mwmdev/tools/blob/main/mwmpl/mwmpl) is a simple bash script that uses `wp-cli` and `WP Migrate` to pull the DB from a remote Wordpress site.
+
+Settings are defined in an `.env` file like so :
+
+```
+wpmdb_key=[WP Migrate site key]
+live_url=[Live site URL]
+```
+
+Example output :
+
+```
+Are you sure you want to pull the database from https://mysite.com ? (Y/n):
+Verifying connection...
+Initiating migration...
+Migrating tables      100% [==========================================================================================================] 0:37 / 0:36
+Cleaning up...
+Flushing caches and rewrite rules...
+Success: Migration successful.
 ```
