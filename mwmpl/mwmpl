@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Read the .env file
+if [ -f "../.env" ]; then
+  source ../.env
+else
+  echo "ERROR: .env file not found."
+  exit 1
+fi
+
+# If $wpmdb_key is empty or $live_url is empty, exit with a message
+if [ -z "$wpmdb_key" ] || [ -z "$live_url" ]; then
+  echo "ERROR: wpmdb_key or live_url not set in .env"
+  exit 1
+fi
+
+# Check if wp migrate db is installed and licence is active
+if [ -z "$(wp migrate --version --allow-root)" ]; then
+  echo "ERROR: wp migrate db not installed or licence not active."
+  exit 1
+else
+  # Promp user and pull the db
+  prompt=$(echo -e "Are you sure you want to pull the database from $live_url ? (Y/n): ")
+  read -p "$prompt" -i y answer
+  if [ "$answer" != "${answer#[nn]}" ] ;then
+    echo "Aborted!"
+    exit 0
+  fi
+  wp migrate pull $live_url $wpmdb_key
+fi
